@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>系统设置 - 光守卫-SEE</title>
+    <style>
+        :root {
+            --primary: #0A2463;
+            --secondary: #3E92CC;
+            --light: #9ED8DB;
+            --accent: #28B5B5;
+            --dark: #051937;
+            --text: #F0F7FF;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        body {
+            background-color: var(--dark);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(158, 216, 219, 0.2);
+        }
+        .back-btn {
+            background-color: rgba(62, 146, 204, 0.2);
+            border: 1px solid var(--secondary);
+            color: var(--light);
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+        .back-btn:hover {
+            background-color: rgba(62, 146, 204, 0.3);
+        }
+        .title {
+            font-size: 22px;
+            color: var(--light);
+        }
+        .settings-container {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 30px;
+        }
+        @media (max-width: 768px) {
+            .settings-container {
+                grid-template-columns: 1fr;
+            }
+        }
+        .settings-sidebar {
+            background: rgba(10, 36, 99, 0.4);
+            border: 1px solid rgba(62, 146, 204, 0.3);
+            border-radius: 12px;
+            padding: 20px 0;
+        }
+        .sidebar-item {
+            padding: 12px 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 15px;
+        }
+        .sidebar-item.active {
+            background-color: rgba(62, 146, 204, 0.3);
+            border-left: 3px solid var(--accent);
+        }
+        .sidebar-item:hover:not(.active) {
+            background-color: rgba(62, 146, 204, 0.1);
+        }
+        .settings-content {
+            background: rgba(10, 36, 99, 0.4);
+            border: 1px solid rgba(62, 146, 204, 0.3);
+            border-radius: 12px;
+            padding: 30px;
+        }
+        .content-title {
+            font-size: 18px;
+            margin-bottom: 25px;
+            color: var(--light);
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(158, 216, 219, 0.2);
+        }
+        .setting-group {
+            margin-bottom: 30px;
+        }
+        .group-title {
+            font-size: 16px;
+            margin-bottom: 15px;
+            color: var(--light);
+        }
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .form-item {
+            flex: 1;
+            min-width: 250px;
+        }
+        .form-item label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: rgba(240, 247, 255, 0.8);
+        }
+        .form-item input, 
+        .form-item select, 
+        .form-item textarea {
+            width: 100%;
+            padding: 10px 12px;
+            background-color: rgba(5, 25, 55, 0.5);
+            border: 1px solid rgba(62, 146, 204, 0.3);
+            border-radius: 6px;
+            color: var(--text);
+            font-size: 14px;
+        }
+        .form-item input:focus,
+        .form-item select:focus,
+        .form-item textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        .action-btn {
+            padding: 10px 20px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        .save-btn {
+            background-color: var(--accent);
+            color: white;
+        }
+        .save-btn:hover {
+            background-color: #209e9e;
+        }
+        .cancel-btn {
+            background-color: rgba(62, 146, 204, 0.2);
+            color: var(--light);
+        }
+        .cancel-btn:hover {
+            background-color: rgba(62, 146, 204, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <button class="back-btn" onclick="window.location.href='index.html'">← 返回首页</button>
+        <div class="title">系统设置</div>
+    </div>
+
+    <div class="settings-container">
+        <div class="settings-sidebar">
+            <div class="sidebar-item active">
+                ⚙️ 基本设置
+            </div>
+            <div class="sidebar-item">
+                👥 用户管理
+            </div>
+            <div class="sidebar-item">
+                📹 设备配置
+            </div>
+            <div class="sidebar-item">
+                🔗 数据对接
+            </div>
+            <div class="sidebar-item">
+                📅 维护计划
+            </div>
+            <div class="sidebar-item">
+                🔔 警报阈值
+            </div>
+            <div class="sidebar-item">
+                💾 数据备份
+            </div>
+        </div>
+
+        <div class="settings-content">
+            <div class="content-title">基本设置</div>
+
+            <div class="setting-group">
+                <div class="group-title">电站信息</div>
+                <div class="form-row">
+                    <div class="form-item">
+                        <label for="station-name">电站名称</label>
+                        <input type="text" id="station-name" value="房山光伏电站">
+                    </div>
+                    <div class="form-item">
+                        <label for="station-capacity">装机容量（MW）</label>
+                        <input type="number" id="station-capacity" value="1.0" step="0.1">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-item">
+                        <label for="station-address">详细地址</label>
+                        <input type="text" id="station-address" value="北京市房山区周口店镇">
+                    </div>
+                    <div class="form-item">
+                        <label for="contact-person">联系人</label>
+                        <input type="text" id="contact-person" value="张经理">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-item">
+                        <label for="contact-phone">联系电话</label>
+                        <input type="tel" id="contact-phone" value="13812345678">
+                    </div>
+                </div>
+            </div>
+
+            <div class="setting-group">
+                <div class="group-title">系统参数</div>
+                <div class="form-row">
+                    <div class="form-item">
+                        <label for="data-refresh">数据刷新频率</label>
+                        <select id="data-refresh">
+                            <option value="30">30秒</option>
+                            <option value="60" selected>1分钟</option>
+                            <option value="300">5分钟</option>
+                            <option value="600">10分钟</option>
+                        </select>
+                    </div>
+                    <div class="form-item">
+                        <label for="language">系统语言</label>
+                        <select id="language">
+                            <option value="zh-CN" selected>简体中文</option>
+                            <option value="en">English</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-item">
+                        <label for="timezone">时区设置</label>
+                        <select id="timezone">
+                            <option value="Asia/Shanghai" selected>Asia/Shanghai (UTC+8)</option>
+                        </select>
+                    </div>
+                    <div class="form-item">
+                        <label for="font-size">界面字体大小</label>
+                        <select id="font-size">
+                            <option value="14">默认（14px）</option>
+                            <option value="16" selected>放大（16px）</option>
+                            <option value="18">超大（18px）</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <button class="action-btn save-btn">保存设置</button>
+                <button class="action-btn cancel-btn">取消</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

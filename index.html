@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>光守卫-SEE 操作终端</title>
     <style>
         :root {
@@ -14,7 +17,6 @@
             --text: #F0F7FF;
             --danger: #FF5E5B;
             --warning: #FFB830;
-            --success: #36D399;
         }
         * {
             margin: 0;
@@ -30,46 +32,7 @@
             color: var(--text);
             min-height: 100vh;
             padding: 20px;
-            overflow: hidden; /* 防止加载动画期间页面滚动 */
         }
-
-        /* 加载动画容器 */
-        .loader-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: var(--dark);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            animation: fadeOut 1s ease-in-out forwards;
-            animation-delay: 1.5s;
-        }
-        @keyframes fadeOut {
-            from { opacity: 1; }
-            to { opacity: 0; visibility: hidden; }
-        }
-
-        /* LOGO样式 */
-        .loader-logo {
-            width: 400px;
-            height: auto;
-            animation: fadeIn 0.8s ease-out forwards, pulse 1s ease-in-out 0.8s;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.8); }
-            to { opacity: 1; transform: scale(1); }
-        }
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-
-        /* 主页原有样式（保持不变） */
         .clock-bar {
             display: flex;
             justify-content: space-between;
@@ -79,11 +42,6 @@
             background: rgba(10, 36, 99, 0.3);
             border-radius: 8px;
             border: 1px solid rgba(62, 146, 204, 0.2);
-            backdrop-filter: blur(5px);
-            transition: all 0.3s ease;
-        }
-        .clock-bar:hover {
-            border-color: rgba(62, 146, 204, 0.4);
         }
         .clock-display {
             font-size: 16px;
@@ -110,13 +68,12 @@
         }
         .mode-energy {
             background-color: rgba(54, 211, 153, 0.2);
-            color: var(--success);
+            color: #36D399;
             border-color: rgba(54, 211, 153, 0.3);
         }
         .mode-energy.active {
-            background-color: var(--success);
+            background-color: #36D399;
             color: white;
-            box-shadow: 0 0 10px rgba(54, 211, 153, 0.3);
         }
         .mode-balance {
             background-color: rgba(62, 146, 204, 0.2);
@@ -126,7 +83,6 @@
         .mode-balance.active {
             background-color: var(--secondary);
             color: white;
-            box-shadow: 0 0 10px rgba(62, 146, 204, 0.3);
         }
         .mode-sharp {
             background-color: rgba(158, 216, 219, 0.2);
@@ -136,7 +92,6 @@
         .mode-sharp.active {
             background-color: #9ED8DB;
             color: var(--dark);
-            box-shadow: 0 0 10px rgba(158, 216, 219, 0.3);
         }
         .alarm-btn {
             background-color: rgba(255, 94, 91, 0.2);
@@ -153,8 +108,6 @@
         }
         .alarm-btn:hover {
             background-color: rgba(255, 94, 91, 0.3);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
         .header {
             display: flex;
@@ -201,7 +154,6 @@
         }
         .mail-icon:hover {
             background-color: rgba(62, 146, 204, 0.3);
-            transform: translateY(-2px);
         }
         .mail-badge {
             position: absolute;
@@ -217,12 +169,6 @@
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            animation: pulseBadge 2s infinite;
-        }
-        @keyframes pulseBadge {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
         }
         .user-avatar {
             width: 40px;
@@ -233,12 +179,6 @@
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        .user-avatar:hover {
-            transform: scale(1.1);
-            box-shadow: 0 0 10px rgba(62, 146, 204, 0.5);
         }
         .core-stats {
             display: grid;
@@ -254,18 +194,10 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
-            transition: all 0.3s ease;
-        }
-        .core-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
         }
         .core-card.highlight {
             border-color: var(--warning);
             background-color: rgba(255, 184, 48, 0.05);
-        }
-        .core-card.highlight:hover {
-            box-shadow: 0 10px 20px rgba(255, 184, 48, 0.1);
         }
         .core-label {
             font-size: 14px;
@@ -276,16 +208,9 @@
             font-size: 32px;
             font-weight: bold;
             color: var(--light);
-            transition: all 0.3s;
-        }
-        .core-value:hover {
-            transform: translateX(5px);
         }
         .core-value.warning {
             color: var(--warning);
-        }
-        .core-value.success {
-            color: var(--success);
         }
         .auxiliary-stats {
             display: flex;
@@ -294,37 +219,12 @@
             overflow-x: auto;
             padding-bottom: 10px;
         }
-        .auxiliary-stats::-webkit-scrollbar {
-            height: 6px;
-        }
-        .auxiliary-stats::-webkit-scrollbar-track {
-            background: rgba(10, 36, 99, 0.2);
-            border-radius: 10px;
-        }
-        .auxiliary-stats::-webkit-scrollbar-thumb {
-            background: rgba(62, 146, 204, 0.5);
-            border-radius: 10px;
-        }
         .aux-item {
             flex: 0 0 200px;
             background: rgba(10, 36, 99, 0.3);
             border-radius: 8px;
             padding: 18px;
             border-left: 3px solid var(--secondary);
-            transition: all 0.3s ease;
-        }
-        .aux-item:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
-        }
-        .aux-item.warning {
-            border-left-color: var(--warning);
-        }
-        .aux-item.danger {
-            border-left-color: var(--danger);
-        }
-        .aux-item.success {
-            border-left-color: var(--success);
         }
         .aux-value {
             font-size: 22px;
@@ -381,11 +281,6 @@
             justify-content: center;
             margin-bottom: 20px;
             font-size: 24px;
-            transition: all 0.3s ease;
-        }
-        .module-card:hover .module-icon {
-            background-color: rgba(62, 146, 204, 0.3);
-            transform: scale(1.1);
         }
         .module-title {
             font-size: 18px;
@@ -401,109 +296,15 @@
             position: absolute;
             top: 15px;
             right: 15px;
-            background-color: var(--danger);
+            background-color: #FF5E5B;
             color: white;
             font-size: 12px;
             padding: 3px 8px;
             border-radius: 12px;
-            animation: pulseBadge 2s infinite;
-        }
-        
-        /* 添加了设备状态图表容器样式 */
-        .status-chart {
-            margin-top: 30px;
-            padding: 20px;
-            background: rgba(10, 36, 99, 0.3);
-            border-radius: 12px;
-            border: 1px solid rgba(62, 146, 204, 0.3);
-        }
-        .chart-title {
-            font-size: 18px;
-            margin-bottom: 15px;
-            color: var(--light);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .chart-period {
-            font-size: 14px;
-            color: rgba(240, 247, 255, 0.7);
-            display: flex;
-            gap: 10px;
-        }
-        .period-btn {
-            padding: 4px 10px;
-            border-radius: 4px;
-            border: none;
-            background: transparent;
-            color: inherit;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .period-btn.active {
-            background: rgba(62, 146, 204, 0.3);
-            color: var(--light);
-        }
-        .chart-container {
-            height: 200px;
-            position: relative;
-            overflow: hidden;
-        }
-        .chart-line {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-        }
-        .chart-line path {
-            fill: none;
-            stroke: var(--accent);
-            stroke-width: 2;
-        }
-        .chart-area {
-            fill: linear-gradient(to top, rgba(40, 181, 181, 0.2), transparent);
-        }
-        .chart-axis {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 1px;
-            background-color: rgba(158, 216, 219, 0.2);
-        }
-        .chart-tick {
-            position: absolute;
-            bottom: -5px;
-            width: 1px;
-            height: 5px;
-            background-color: rgba(158, 216, 219, 0.2);
-        }
-        .chart-label {
-            position: absolute;
-            bottom: -20px;
-            font-size: 12px;
-            color: rgba(240, 247, 255, 0.6);
-            transform: translateX(-50%);
-        }
-        
-        .footer {
-            text-align: center;
-            margin-top: 40px;
-            padding-top: 20px;
-            border-top: 1px solid rgba(158, 216, 219, 0.1);
-            color: rgba(240, 247, 255, 0.5);
-            font-size: 12px;
         }
     </style>
 </head>
 <body>
-    <!-- 加载动画容器 -->
-    <div class="loader-container">
-        <img src="images/end.png" alt="LOGO" style="width: 900px; height: auto;">
-    </div>
-
-    <!-- 主页内容 -->
     <div class="clock-bar">
         <div class="clock-display">
             <div class="time" id="current-time">00:00:00</div>
@@ -515,7 +316,7 @@
                 <button class="mode-btn mode-balance active">均衡模式</button>
                 <button class="mode-btn mode-sharp">敏锐模式</button>
             </div>
-            <button class="alarm-btn" onclick="showAlarmConfirm()">
+            <button class="alarm-btn" onclick="alert('一键报警已触发！系统将通知相关人员并启动应急预案')">
                 🚨 一键报警
             </button>
         </div>
@@ -523,8 +324,7 @@
 
     <div class="header">
         <div class="logo">
-            <!-- 融入主页的LOGO -->
-            <img src="images/normal.png" alt="LOGO" style="width: 300px; height: auto;">
+            <div class="logo-icon">GS</div>
             光守卫-SEE 操作终端
         </div>
         <div class="user-info">
@@ -533,7 +333,7 @@
                 <span class="mail-badge">2</span>
             </div>
             <span>房山电站管理员</span>
-            <div class="user-avatar" title="个人信息">管</div>
+            <div class="user-avatar">管</div>
         </div>
     </div>
 
@@ -545,7 +345,7 @@
         </div>
         <div class="core-card">
             <div class="core-label">清洁后增收预估</div>
-            <div class="core-value success">¥2,560</div>
+            <div class="core-value">¥2,560</div>
             <div class="core-label" style="margin-top: 8px; font-size: 12px;">今日预估</div>
         </div>
         <div class="core-card highlight">
@@ -555,42 +355,13 @@
         </div>
         <div class="core-card">
             <div class="core-label">待处理警报</div>
-            <div class="core-value danger">3</div>
+            <div class="core-value">3</div>
             <div class="core-label" style="margin-top: 8px; font-size: 12px;">含消防1项、安保2项</div>
         </div>
     </div>
 
-    <!-- 添加了发电趋势图表 -->
-    <div class="status-chart">
-        <div class="chart-title">
-            今日发电趋势
-            <div class="chart-period">
-                <button class="period-btn">日</button>
-                <button class="period-btn active">周</button>
-                <button class="period-btn">月</button>
-            </div>
-        </div>
-        <div class="chart-container">
-            <svg class="chart-line" viewBox="0 0 100 50" preserveAspectRatio="none">
-                <path d="M0,40 L10,38 L20,30 L30,25 L40,15 L50,10 L60,12 L70,18 L80,25 L90,32 L100,35" />
-                <path class="chart-area" d="M0,40 L10,38 L20,30 L30,25 L40,15 L50,10 L60,12 L70,18 L80,25 L90,32 L100,35 L100,50 L0,50 Z" />
-            </svg>
-            <div class="chart-axis"></div>
-            <div class="chart-tick" style="left: 0%"></div>
-            <div class="chart-label" style="left: 0%">00:00</div>
-            <div class="chart-tick" style="left: 25%"></div>
-            <div class="chart-label" style="left: 25%">06:00</div>
-            <div class="chart-tick" style="left: 50%"></div>
-            <div class="chart-label" style="left: 50%">12:00</div>
-            <div class="chart-tick" style="left: 75%"></div>
-            <div class="chart-label" style="left: 75%">18:00</div>
-            <div class="chart-tick" style="left: 100%"></div>
-            <div class="chart-label" style="left: 100%">24:00</div>
-        </div>
-    </div>
-
     <div class="auxiliary-stats">
-        <div class="aux-item warning">
+        <div class="aux-item">
             <div class="aux-value">18%</div>
             <div class="aux-label">光伏板灰尘覆盖指数</div>
         </div>
@@ -602,7 +373,7 @@
             <div class="aux-value">06:42 / 17:15</div>
             <div class="aux-label">今日日出/日落时间</div>
         </div>
-        <div class="aux-item success">
+        <div class="aux-item">
             <div class="aux-value">5.6 吨</div>
             <div class="aux-label">30天内节水总量</div>
         </div>
@@ -618,57 +389,40 @@
             <div class="aux-value">8</div>
             <div class="aux-label">在线摄像头数量</div>
         </div>
-        <div class="aux-item danger">
-            <div class="aux-value">1</div>
-            <div class="aux-label">离线摄像头数量</div>
-        </div>
     </div>
 
     <div class="dashboard">
-        <div class="module-card" onclick="navigateTo('revenue.html')">
+        <div class="module-card" onclick="window.location.href='revenue.html'">
             <div class="module-icon">💹</div>
             <div class="module-title">收益预估查看</div>
             <div class="module-desc">查看实时发电收益、历史收益趋势及未来收益预测，支持按日/周/月筛选</div>
         </div>
 
-        <div class="module-card" onclick="navigateTo('alerts.html')">
+        <div class="module-card" onclick="window.location.href='alerts.html'">
             <div class="alert-badge">3</div>
             <div class="module-icon">⚠️</div>
             <div class="module-title">警报查看与处置</div>
             <div class="module-desc">查看系统警报列表，处理消防、安保及设备异常警报，记录处置结果</div>
         </div>
 
-        <div class="module-card" onclick="navigateTo('cameras.html')">
+        <div class="module-card" onclick="window.location.href='cameras.html'">
             <div class="module-icon">📹</div>
             <div class="module-title">摄像头监控</div>
             <div class="module-desc">实时查看各摄像头画面，支持云台控制、焦距调节及历史录像回放</div>
         </div>
 
-        <div class="module-card" onclick="navigateTo('cleaning.html')">
-            <div class="module-icon">🧹</div>
-            <div class="module-title">清洁计划管理</div>
-            <div class="module-desc">查看和管理光伏板清洁计划，设置自动提醒，记录清洁历史和效果</div>
-        </div>
-
-        <div class="module-card" onclick="navigateTo('equipment.html')">
-            <div class="module-icon">🔌</div>
-            <div class="module-title">设备状态监控</div>
-            <div class="module-desc">实时监控光伏设备运行状态，查看性能参数和故障信息，生成维护建议</div>
-        </div>
-
-        <div class="module-card" onclick="navigateTo('settings.html')">
+        <div class="module-card" onclick="window.location.href='settings.html'">
             <div class="module-icon">⚙️</div>
             <div class="module-title">系统设置</div>
             <div class="module-desc">配置系统参数、用户权限管理、数据对接设置及设备维护计划</div>
         </div>
     </div>
 
-    <div class="footer">
-        光守卫-SEE 操作终端 v2.1.0 | 系统版本 Build 20260101
+    <div style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid rgba(158, 216, 219, 0.1); color: rgba(240, 247, 255, 0.5); font-size: 12px;">
+        光守卫-SEE 操作终端 v1.1.0 | 系统版本 Build 20251102
     </div>
 
     <script>
-        // 实时时钟功能
         function updateClock() {
             const now = new Date();
             const hours = String(now.getHours()).padStart(2, '0');
@@ -711,72 +465,21 @@
             return `${year}-${month}-${day}`;
         }
 
-        // 初始化时钟并设置定时器
         updateClock();
         setInterval(updateClock, 1000);
 
-        // 模式切换功能
         const modeBtns = document.querySelectorAll('.mode-btn');
         modeBtns.forEach(btn => {
             btn.addEventListener('click', () => {
                 modeBtns.forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
-                showModeChangeAlert(btn.textContent);
             });
         });
 
-        // 图表周期切换
-        const periodBtns = document.querySelectorAll('.period-btn');
-        periodBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                periodBtns.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                // 这里可以添加图表数据更新逻辑
-            });
-        });
-
-        // 信封点击事件
         document.querySelector('.mail-icon').addEventListener('click', () => {
             const nextCleanDate = document.getElementById('next-cleaning-date').textContent;
             alert(`您有2条未读消息：\n1. 清洁提醒：建议于${nextCleanDate}前完成光伏板清扫\n2. 系统更新通知：新版本V2.1.0已发布，支持更多数据可视化功能`);
         });
-
-        // 用户头像点击事件
-        document.querySelector('.user-avatar').addEventListener('click', () => {
-            alert('用户信息：\n姓名：房山电站管理员\nID：ADM-2026-001\n权限：管理员\n最后登录：今天 08:30');
-        });
-
-        // 导航功能
-        function navigateTo(page) {
-            // 实际项目中这里会跳转到对应页面
-            // 这里用提示框模拟
-            alert(`即将跳转到：${page}`);
-            // window.location.href = page;
-        }
-
-        // 报警确认功能
-        function showAlarmConfirm() {
-            if(confirm('确定要触发一键报警吗？\n此操作将通知相关人员并启动应急预案。')) {
-                alert('一键报警已触发！\n系统已通知相关人员并启动应急预案。');
-            }
-        }
-
-        // 模式切换提示
-        function showModeChangeAlert(mode) {
-            let description = '';
-            switch(mode) {
-                case '节能模式':
-                    description = '系统将优先考虑能源效率，降低能耗，可能会影响部分监控频率';
-                    break;
-                case '均衡模式':
-                    description = '系统在性能和能耗之间取得平衡，适合日常监控使用';
-                    break;
-                case '敏锐模式':
-                    description = '系统将提高监控频率和数据采集精度，能耗会有所增加';
-                    break;
-            }
-            alert(`已切换至${mode}\n${description}`);
-        }
     </script>
 </body>
 </html>

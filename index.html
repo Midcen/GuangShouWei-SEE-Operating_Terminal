@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>光守卫-SEE 操作终端</title>
+    <style>
+        :root {
+            --primary: #0A2463; /* 深蓝主色 */
+            --secondary: #3E92CC; /* 中蓝辅助色 */
+            --light: #9ED8DB; /* 浅蓝 */
+            --accent: #28B5B5; /* 亮蓝强调色 */
+            --dark: #051937; /* 近黑蓝 */
+            --text: #F0F7FF; /* 文本色 */
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background-color: var(--dark);
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(10, 36, 99, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(40, 181, 181, 0.1) 0%, transparent 20%);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(158, 216, 219, 0.2);
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--light);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+            background-color: var(--accent);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        .module-card {
+            background: rgba(10, 36, 99, 0.4);
+            border: 1px solid rgba(62, 146, 204, 0.3);
+            border-radius: 12px;
+            padding: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .module-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--secondary), var(--accent));
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+        .module-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+        .module-card:hover::before {
+            transform: scaleX(1);
+        }
+        .module-icon {
+            width: 60px;
+            height: 60px;
+            background-color: rgba(62, 146, 204, 0.2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        .module-title {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: var(--light);
+        }
+        .module-desc {
+            font-size: 14px;
+            color: rgba(240, 247, 255, 0.7);
+            line-height: 1.6;
+        }
+        .stat-bar {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 40px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+        }
+        .stat-item {
+            flex: 1;
+            min-width: 200px;
+            background: rgba(10, 36, 99, 0.3);
+            border-radius: 8px;
+            padding: 20px;
+            border-left: 3px solid var(--accent);
+        }
+        .stat-value {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: var(--light);
+        }
+        .stat-label {
+            font-size: 14px;
+            color: rgba(240, 247, 255, 0.6);
+        }
+        .alert-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background-color: #FF5E5B;
+            color: white;
+            font-size: 12px;
+            padding: 3px 8px;
+            border-radius: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">
+            <div class="logo-icon">GS</div>
+            光守卫-SEE 操作终端
+        </div>
+        <div class="user-info">
+            <span>房山电站管理员</span>
+            <div class="user-avatar">管</div>
+        </div>
+    </div>
+
+    <div class="stat-bar">
+        <div class="stat-item">
+            <div class="stat-value">1024°</div>
+            <div class="stat-label">今日发电量(MW)</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value">3</div>
+            <div class="stat-label">待处理警报</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value">8</div>
+            <div class="stat-label">在线摄像头</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value">¥2,560</div>
+            <div class="stat-label">今日预估收益</div>
+        </div>
+    </div>
+
+    <div class="dashboard">
+        <!-- 收益预估模块 -->
+        <div class="module-card" onclick="window.location.href='revenue.html'">
+            <div class="module-icon">💹</div>
+            <div class="module-title">收益预估查看</div>
+            <div class="module-desc">查看实时发电收益、历史收益趋势及未来收益预测，支持按日/周/月筛选</div>
+        </div>
+
+        <!-- 警报查看与处置模块 -->
+        <div class="module-card" onclick="window.location.href='alerts.html'">
+            <div class="alert-badge">3</div>
+            <div class="module-icon">⚠️</div>
+            <div class="module-title">警报查看与处置</div>
+            <div class="module-desc">查看系统警报列表，处理消防、安保及设备异常警报，记录处置结果</div>
+        </div>
+
+        <!-- 摄像头实时查看模块 -->
+        <div class="module-card" onclick="window.location.href='cameras.html'">
+            <div class="module-icon">📹</div>
+            <div class="module-title">摄像头监控</div>
+            <div class="module-desc">实时查看各摄像头画面，支持云台控制、焦距调节及历史录像回放</div>
+        </div>
+
+        <!-- 系统设置模块 -->
+        <div class="module-card" onclick="window.location.href='settings.html'">
+            <div class="module-icon">⚙️</div>
+            <div class="module-title">系统设置</div>
+            <div class="module-desc">配置系统参数、用户权限管理、数据对接设置及设备维护计划</div>
+        </div>
+    </div>
+</body>
+</html>

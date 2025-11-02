@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>摄像头监控 - 光守卫-SEE</title>
+    <style>
+        :root {
+            --primary: #0A2463;
+            --secondary: #3E92CC;
+            --light: #9ED8DB;
+            --accent: #28B5B5;
+            --dark: #051937;
+            --text: #F0F7FF;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        body {
+            background-color: var(--dark);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(158, 216, 219, 0.2);
+        }
+        .back-btn {
+            background-color: rgba(62, 146, 204, 0.2);
+            border: 1px solid var(--secondary);
+            color: var(--light);
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+        .back-btn:hover {
+            background-color: rgba(62, 146, 204, 0.3);
+        }
+        .title {
+            font-size: 22px;
+            color: var(--light);
+        }
+        .camera-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .camera-card {
+            background: rgba(10, 36, 99, 0.4);
+            border: 1px solid rgba(62, 146, 204, 0.3);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+        .camera-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        .camera-feed {
+            width: 100%;
+            height: 200px;
+            background-color: #000;
+            position: relative;
+            overflow: hidden;
+        }
+        .camera-feed img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .live-indicator {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #36D399;
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        .camera-info {
+            padding: 15px;
+        }
+        .camera-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: var(--light);
+            display: flex;
+            justify-content: space-between;
+        }
+        .camera-location {
+            font-size: 13px;
+            color: rgba(240, 247, 255, 0.7);
+            margin-bottom: 10px;
+        }
+        .camera-controls {
+            display: flex;
+            gap: 10px;
+        }
+        .control-btn {
+            flex: 1;
+            padding: 8px;
+            border-radius: 6px;
+            border: none;
+            background-color: rgba(62, 146, 204, 0.2);
+            color: var(--light);
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+        .control-btn:hover {
+            background-color: rgba(62, 146, 204, 0.3);
+        }
+        .replay-btn {
+            background-color: rgba(40, 181, 181, 0.2);
+        }
+        .replay-btn:hover {
+            background-color: rgba(40, 181, 181, 0.3);
+        }
+        .camera-status {
+            font-size: 12px;
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+        .status-online {
+            background-color: rgba(54, 211, 153, 0.2);
+            color: #36D399;
+        }
+        .status-offline {
+            background-color: rgba(255, 94, 91, 0.2);
+            color: #FF5E5B;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <button class="back-btn" onclick="window.location.href='index.html'">← 返回首页</button>
+        <div class="title">摄像头监控</div>
+    </div>
+
+    <div class="camera-grid">
+        <!-- 摄像头1：光伏阵列全景 -->
+        <div class="camera-card">
+            <div class="camera-feed">
+                <img src="https://images.unsplash.com/photo-1581578731548-c6489a59d94e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80" alt="光伏区阵列全景">
+                <div class="live-indicator">
+                    <div class="live-dot"></div>
+                    实时
+                </div>
+            </div>
+            <div class="camera-info">
+                <div class="camera-name">
+                    <span>摄像头 #1</span>
+                    <span class="camera-status status-online">在线</span>
+                </div>
+                <div class="camera-location">房山电站 - 南区阵列A</div>
+                <div class="camera-controls">
+                    <button class="control-btn">📷 截图</button>
+                    <button class="control-btn replay-btn">⏪ 回放</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 摄像头2：逆变器区域 -->
+        <div class="camera-card">
+            <div class="camera-feed">
+                <img src="https://images.unsplash.com/photo-1628899056606-965a9815a13e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80" alt="光伏逆变器区域">
+                <div class="live-indicator">
+                    <div class="live-dot"></div>
+                    实时
+                </div>
+            </div>
+            <div class="camera-info">
+                <div class="camera-name">
+                    <span>摄像头 #2</span>
+                    <span class="camera-status status-online">在线</span>
+                </div>
+                <div class="camera-location">房山电站 - 南区逆变器组</div>
+                <div class="camera-controls">
+                    <button class="control-btn">📷 截图</button>
+                    <button class="control-btn replay-btn">⏪ 回放</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 摄像头3：光伏板细节 -->
+        <div class="camera-card">
+            <div class="camera-feed">
+                <img src="https://images.unsplash.com/photo-1518492104633-0e5310ba6655?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80" alt="光伏板细节">
+                <div class="live-indicator">
+                    <div class="live-dot"></div>
+                    实时
+                </div>
+            </div>
+            <div class="camera-info">
+                <div class="camera-name">
+                    <span>摄像头 #3</span>
+                    <span class="camera-status status-online">在线</span>
+                </div>
+                <div class="camera-location">房山电站 - 北区阵列A</div>
+                <div class="camera-controls">
+                    <button class="control-btn">📷 截图</button>
+                    <button class="control-btn replay-btn">⏪ 回放</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 摄像头4：电站入口 -->
+        <div class="camera-card">
+            <div class="camera-feed">
+                <img src="https://images.unsplash.com/photo-1598515211155-003700877b6a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80" alt="电站入口区域">
+                <div class="live-indicator">
+                    <div class="live-dot"></div>
+                    实时
+                </div>
+            </div>
+            <div class="camera-info">
+                <div class="camera-name">
+                    <span>摄像头 #4</span>
+                    <span class="camera-status status-online">在线</span>
+                </div>
+                <div class="camera-location">房山电站 - 主入口</div>
+                <div class="camera-controls">
+                    <button class="control-btn">📷 截图</button>
+                    <button class="control-btn replay-btn">⏪ 回放</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 摄像头5 (离线)：东区阵列 -->
+        <div class="camera-card">
+            <div class="camera-feed">
+                <img src="https://images.unsplash.com/photo-1518492104633-0e5310ba6655?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80" style="filter: grayscale(1); opacity: 0.5;" alt="离线光伏区域">
+            </div>
+            <div class="camera-info">
+                <div class="camera-name">
+                    <span>摄像头 #5</span>
+                    <span class="camera-status status-offline">离线</span>
+                </div>
+                <div class="camera-location">房山电站 - 东区阵列</div>
+                <div class="camera-controls">
+                    <button class="control-btn" disabled>📷 截图</button>
+                    <button class="control-btn replay-btn" disabled>⏪ 回放</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>警报处置 - 光守卫-SEE</title>
+    <style>
+        :root {
+            --primary: #0A2463;
+            --secondary: #3E92CC;
+            --light: #9ED8DB;
+            --accent: #28B5B5;
+            --dark: #051937;
+            --text: #F0F7FF;
+            --warning: #FFB830;
+            --danger: #FF5E5B;
+            --success: #36D399;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        body {
+            background-color: var(--dark);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(158, 216, 219, 0.2);
+        }
+        .back-btn {
+            background-color: rgba(62, 146, 204, 0.2);
+            border: 1px solid var(--secondary);
+            color: var(--light);
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+        .back-btn:hover {
+            background-color: rgba(62, 146, 204, 0.3);
+        }
+        .title {
+            font-size: 22px;
+            color: var(--light);
+        }
+        .filter-bar {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        .filter-btn {
+            background-color: rgba(10, 36, 99, 0.4);
+            border: 1px solid rgba(62, 146, 204, 0.3);
+            color: var(--text);
+            padding: 8px 18px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .filter-btn.active {
+            background-color: var(--secondary);
+            color: white;
+        }
+        .alerts-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .alert-card {
+            background: rgba(10, 36, 99, 0.4);
+            border: 1px solid rgba(62, 146, 204, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+        }
+        .alert-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        .alert-card.pending {
+            border-left: 4px solid var(--danger);
+        }
+        .alert-card.processing {
+            border-left: 4px solid var(--warning);
+        }
+        .alert-card.resolved {
+            border-left: 4px solid var(--success);
+        }
+        .alert-info {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        .alert-type {
+            font-weight: bold;
+            font-size: 16px;
+        }
+        .alert-location {
+            font-size: 14px;
+            color: rgba(240, 247, 255, 0.7);
+        }
+        .alert-time {
+            font-size: 13px;
+            color: rgba(240, 247, 255, 0.5);
+        }
+        .alert-actions {
+            display: flex;
+            gap: 10px;
+        }
+        .action-btn {
+            padding: 8px 15px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        .view-btn {
+            background-color: rgba(62, 146, 204, 0.2);
+            color: var(--light);
+        }
+        .view-btn:hover {
+            background-color: rgba(62, 146, 204, 0.3);
+        }
+        .resolve-btn {
+            background-color: var(--accent);
+            color: white;
+        }
+        .resolve-btn:hover {
+            background-color: #209e9e;
+        }
+        .status-badge {
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            margin-right: 10px;
+        }
+        .status-pending {
+            background-color: rgba(255, 94, 91, 0.2);
+            color: var(--danger);
+        }
+        .status-processing {
+            background-color: rgba(255, 184, 48, 0.2);
+            color: var(--warning);
+        }
+        .status-resolved {
+            background-color: rgba(54, 211, 153, 0.2);
+            color: var(--success);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <button class="back-btn" onclick="window.location.href='index.html'">← 返回首页</button>
+        <div class="title">警报查看与处置</div>
+    </div>
+
+    <div class="filter-bar">
+        <button class="filter-btn active">全部警报</button>
+        <button class="filter-btn">待处理 (3)</button>
+        <button class="filter-btn">处理中 (0)</button>
+        <button class="filter-btn">已解决 (12)</button>
+    </div>
+
+    <div class="alerts-container">
+        <!-- 待处理警报1 -->
+        <div class="alert-card pending">
+            <div class="alert-info">
+                <div>
+                    <span class="status-badge status-pending">待处理</span>
+                    <span class="alert-type">消防预警 - 温度异常升高</span>
+                </div>
+                <span class="alert-location">房山电站 - 西北区域逆变器组</span>
+                <span class="alert-time">2026-01-20 14:32:15</span>
+            </div>
+            <div class="alert-actions">
+                <button class="action-btn view-btn">查看详情</button>
+                <button class="action-btn resolve-btn">标记已处理</button>
+            </div>
+        </div>
+
+        <!-- 待处理警报2 -->
+        <div class="alert-card pending">
+            <div class="alert-info">
+                <div>
+                    <span class="status-badge status-pending">待处理</span>
+                    <span class="alert-type">安保警报 - 陌生人闯入</span>
+                </div>
+                <span class="alert-location">房山电站 - 南门区域</span>
+                <span class="alert-time">2026-01-20 10:15:37</span>
+            </div>
+            <div class="alert-actions">
+                <button class="action-btn view-btn">查看详情</button>
+                <button class="action-btn resolve-btn">标记已处理</button>
+            </div>
+        </div>
+
+        <!-- 待处理警报3 -->
+        <div class="alert-card pending">
+            <div class="alert-info">
+                <div>
+                    <span class="status-badge status-pending">待处理</span>
+                    <span class="alert-type">设备异常 - 摄像头通讯中断</span>
+                </div>
+                <span class="alert-location">房山电站 - 摄像头#5（东区）</span>
+                <span class="alert-time">2026-01-19 18:47:22</span>
+            </div>
+            <div class="alert-actions">
+                <button class="action-btn view-btn">查看详情</button>
+                <button class="action-btn resolve-btn">标记已处理</button>
+            </div>
+        </div>
+
+        <!-- 已解决警报 -->
+        <div class="alert-card resolved">
+            <div class="alert-info">
+                <div>
+                    <span class="status-badge status-resolved">已解决</span>
+                    <span class="alert-type">污染预警 - 光伏板清洁度低</span>
+                </div>
+                <span class="alert-location">房山电站 - 南区阵列A</span>
+                <span class="alert-time">2026-01-18 09:23:10</span>
+                <span class="alert-time" style="margin-top:5px;">处理结果: 已安排清洁，清洁后发电量提升28%</span>
+            </div>
+            <div class="alert-actions">
+                <button class="action-btn view-btn">查看详情</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

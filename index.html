@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>光守卫-SEE 操作终端</title>
     <style>
         :root {
@@ -30,7 +33,6 @@
             min-height: 100vh;
             padding: 20px;
         }
-        /* 时钟栏样式 */
         .clock-bar {
             display: flex;
             justify-content: space-between;
@@ -137,7 +139,6 @@
             align-items: center;
             gap: 15px;
         }
-        /* 信封UI样式 */
         .mail-icon {
             width: 32px;
             height: 32px;
@@ -179,7 +180,6 @@
             justify-content: center;
             font-weight: bold;
         }
-        /* 核心数据区域：2x2网格布局，突出重点 */
         .core-stats {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -212,7 +212,6 @@
         .core-value.warning {
             color: var(--warning);
         }
-        /* 辅助数据区域：横向滚动，展示详细信息 */
         .auxiliary-stats {
             display: flex;
             gap: 20px;
@@ -238,7 +237,6 @@
             color: rgba(240, 247, 255, 0.6);
             line-height: 1.4;
         }
-        /* 功能模块区域 */
         .dashboard {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -307,7 +305,6 @@
     </style>
 </head>
 <body>
-    <!-- 时钟和控制栏 -->
     <div class="clock-bar">
         <div class="clock-display">
             <div class="time" id="current-time">00:00:00</div>
@@ -340,7 +337,6 @@
         </div>
     </div>
 
-    <!-- 核心数据区域：2x2网格，突出关键指标 -->
     <div class="core-stats">
         <div class="core-card">
             <div class="core-label">今日发电量</div>
@@ -354,8 +350,8 @@
         </div>
         <div class="core-card highlight">
             <div class="core-label">建议下次清洁时间</div>
-            <div class="core-value warning">2026-01-08</div>
-            <div class="core-label" style="margin-top: 8px; font-size: 12px;">距当前剩余2天</div>
+            <div class="core-value warning" id="next-cleaning-date">2026-01-04</div>
+            <div class="core-label" style="margin-top: 8px; font-size: 12px;" id="days-until-next-cleaning">距当前剩余3天</div>
         </div>
         <div class="core-card">
             <div class="core-label">待处理警报</div>
@@ -364,7 +360,6 @@
         </div>
     </div>
 
-    <!-- 辅助数据区域：横向展示详细信息 -->
     <div class="auxiliary-stats">
         <div class="aux-item">
             <div class="aux-value">18%</div>
@@ -383,11 +378,11 @@
             <div class="aux-label">30天内节水总量</div>
         </div>
         <div class="aux-item">
-            <div class="aux-value">2026-01-10</div>
+            <div class="aux-value" id="last-maintenance-date">2025-12-28</div>
             <div class="aux-label">上次设备维护时间</div>
         </div>
         <div class="aux-item">
-            <div class="aux-value">2026-01-05</div>
+            <div class="aux-value" id="last-cleaning-date">2025-12-25</div>
             <div class="aux-label">上次光伏板清扫时间</div>
         </div>
         <div class="aux-item">
@@ -396,7 +391,6 @@
         </div>
     </div>
 
-    <!-- 功能模块区域 -->
     <div class="dashboard">
         <div class="module-card" onclick="window.location.href='revenue.html'">
             <div class="module-icon">💹</div>
@@ -424,29 +418,56 @@
         </div>
     </div>
 
+    <div style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid rgba(158, 216, 219, 0.1); color: rgba(240, 247, 255, 0.5); font-size: 12px;">
+        光守卫-SEE 操作终端 v2.1.0 | 系统版本 Build 20260101
+    </div>
+
     <script>
-        // 实时时钟功能
         function updateClock() {
             const now = new Date();
-            // 时间格式化
             const hours = String(now.getHours()).padStart(2, '0');
             const minutes = String(now.getMinutes()).padStart(2, '0');
             const seconds = String(now.getSeconds()).padStart(2, '0');
             document.getElementById('current-time').textContent = `${hours}:${minutes}:${seconds}`;
             
-            // 日期格式化
             const year = now.getFullYear();
             const month = now.getMonth() + 1;
             const day = now.getDate();
             const weekdays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
             const weekday = weekdays[now.getDay()];
-            document.getElementById('current-date').textContent = `${year}年${month}月${day}日 ${weekday}`;
+            const currentDateText = `${year}年${month}月${day}日 ${weekday}`;
+            document.getElementById('current-date').textContent = currentDateText;
+
+            updateRelatedDates(now);
         }
-        // 初始化时钟并每秒更新
+
+        function updateRelatedDates(currentDate) {
+            const lastMaintenance = new Date(currentDate);
+            lastMaintenance.setDate(currentDate.getDate() - 3);
+            document.getElementById('last-maintenance-date').textContent = formatDate(lastMaintenance);
+
+            const lastCleaning = new Date(currentDate);
+            lastCleaning.setDate(currentDate.getDate() - 6);
+            document.getElementById('last-cleaning-date').textContent = formatDate(lastCleaning);
+
+            const nextCleaning = new Date(currentDate);
+            nextCleaning.setDate(currentDate.getDate() + 3);
+            const daysUntilNextCleaning = 3;
+            
+            document.getElementById('next-cleaning-date').textContent = formatDate(nextCleaning);
+            document.getElementById('days-until-next-cleaning').textContent = `距当前剩余${daysUntilNextCleaning}天`;
+        }
+
+        function formatDate(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
         updateClock();
         setInterval(updateClock, 1000);
 
-        // 模式切换功能
         const modeBtns = document.querySelectorAll('.mode-btn');
         modeBtns.forEach(btn => {
             btn.addEventListener('click', () => {
@@ -455,9 +476,9 @@
             });
         });
 
-        // 信封点击事件
         document.querySelector('.mail-icon').addEventListener('click', () => {
-            alert('您有2条未读消息：\n1. 清洁提醒：建议于2026-01-08前完成光伏板清扫\n2. 系统更新通知：新版本V2.1.0已发布，支持更多数据可视化功能');
+            const nextCleanDate = document.getElementById('next-cleaning-date').textContent;
+            alert(`您有2条未读消息：\n1. 清洁提醒：建议于${nextCleanDate}前完成光伏板清扫\n2. 系统更新通知：新版本V2.1.0已发布，支持更多数据可视化功能`);
         });
     </script>
 </body>

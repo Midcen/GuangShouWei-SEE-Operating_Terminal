@@ -6,7 +6,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>光守卫-SEE 操作终端</title>
+    <title>光守卫操作终端</title>
     <style>
         :root {
             --primary: #0A2463;
@@ -17,6 +17,7 @@
             --text: #F0F7FF;
             --danger: #FF5E5B;
             --warning: #FFB830;
+            --success: #36D399;
         }
         * {
             margin: 0;
@@ -32,7 +33,10 @@
             color: var(--text);
             min-height: 100vh;
             padding: 20px;
+            transition: background-color 0.5s ease;
         }
+
+        /* 时钟栏样式 */
         .clock-bar {
             display: flex;
             justify-content: space-between;
@@ -42,6 +46,11 @@
             background: rgba(10, 36, 99, 0.3);
             border-radius: 8px;
             border: 1px solid rgba(62, 146, 204, 0.2);
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+        }
+        .clock-bar:hover {
+            border-color: rgba(62, 146, 204, 0.4);
         }
         .clock-display {
             font-size: 16px;
@@ -53,7 +62,10 @@
         .time {
             font-size: 20px;
             font-weight: 500;
+            letter-spacing: 1px;
         }
+
+        /* 模式切换按钮 */
         .mode-controls {
             display: flex;
             gap: 10px;
@@ -65,15 +77,37 @@
             font-size: 14px;
             cursor: pointer;
             transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        .mode-btn::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+            transition: 0.5s;
+        }
+        .mode-btn.active::after {
+            left: 100%;
+            animation: modePulse 1.5s infinite;
+        }
+        @keyframes modePulse {
+            0% { box-shadow: 0 0 0 0 rgba(62, 146, 204, 0.3); }
+            70% { box-shadow: 0 0 0 10px rgba(62, 146, 204, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(62, 146, 204, 0); }
         }
         .mode-energy {
             background-color: rgba(54, 211, 153, 0.2);
-            color: #36D399;
+            color: var(--success);
             border-color: rgba(54, 211, 153, 0.3);
         }
         .mode-energy.active {
-            background-color: #36D399;
+            background-color: var(--success);
             color: white;
+            box-shadow: 0 0 15px rgba(54, 211, 153, 0.3);
         }
         .mode-balance {
             background-color: rgba(62, 146, 204, 0.2);
@@ -83,6 +117,7 @@
         .mode-balance.active {
             background-color: var(--secondary);
             color: white;
+            box-shadow: 0 0 15px rgba(62, 146, 204, 0.3);
         }
         .mode-sharp {
             background-color: rgba(158, 216, 219, 0.2);
@@ -92,7 +127,10 @@
         .mode-sharp.active {
             background-color: #9ED8DB;
             color: var(--dark);
+            box-shadow: 0 0 15px rgba(158, 216, 219, 0.3);
         }
+
+        /* 一键报警按钮 */
         .alarm-btn {
             background-color: rgba(255, 94, 91, 0.2);
             border: 1px solid rgba(255, 94, 91, 0.5);
@@ -105,10 +143,21 @@
             gap: 8px;
             font-size: 14px;
             transition: all 0.3s;
+            animation: alarmPulse 2s infinite;
         }
         .alarm-btn:hover {
             background-color: rgba(255, 94, 91, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            animation: none;
         }
+        @keyframes alarmPulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 94, 91, 0.4); }
+            70% { box-shadow: 0 0 0 6px rgba(255, 94, 91, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 94, 91, 0); }
+        }
+
+        /* 页头样式 */
         .header {
             display: flex;
             justify-content: space-between;
@@ -126,13 +175,12 @@
             gap: 10px;
         }
         .logo-icon {
-            width: 36px;
-            height: 36px;
-            background-color: var(--accent);
-            border-radius: 8px;
+            width: 90px;
+            height: 40px;
             display: flex;
             align-items: center;
             justify-content: center;
+            transition: transform 0.3s ease;
         }
         .user-info {
             display: flex;
@@ -154,6 +202,7 @@
         }
         .mail-icon:hover {
             background-color: rgba(62, 146, 204, 0.3);
+            transform: translateY(-2px);
         }
         .mail-badge {
             position: absolute;
@@ -169,6 +218,12 @@
             align-items: center;
             justify-content: center;
             font-weight: bold;
+            animation: pulseBadge 2s infinite;
+        }
+        @keyframes pulseBadge {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
         }
         .user-avatar {
             width: 40px;
@@ -179,7 +234,15 @@
             align-items: center;
             justify-content: center;
             font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
         }
+        .user-avatar:hover {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 0 10px rgba(62, 146, 204, 0.5);
+        }
+
+        /* 核心数据样式 */
         .core-stats {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -194,6 +257,12 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
+            transition: all 0.3s ease;
+        }
+        .core-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            border-color: rgba(62, 146, 204, 0.5);
         }
         .core-card.highlight {
             border-color: var(--warning);
@@ -208,10 +277,17 @@
             font-size: 32px;
             font-weight: bold;
             color: var(--light);
+            transition: all 0.3s;
+        }
+        .core-value:hover {
+            transform: translateX(5px);
         }
         .core-value.warning {
             color: var(--warning);
+            text-shadow: 0 0 10px rgba(255, 184, 48, 0.3);
         }
+
+        /* 辅助数据样式 */
         .auxiliary-stats {
             display: flex;
             gap: 20px;
@@ -219,12 +295,28 @@
             overflow-x: auto;
             padding-bottom: 10px;
         }
+        .auxiliary-stats::-webkit-scrollbar {
+            height: 6px;
+        }
+        .auxiliary-stats::-webkit-scrollbar-track {
+            background: rgba(10, 36, 99, 0.2);
+            border-radius: 10px;
+        }
+        .auxiliary-stats::-webkit-scrollbar-thumb {
+            background: rgba(62, 146, 204, 0.5);
+            border-radius: 10px;
+        }
         .aux-item {
             flex: 0 0 200px;
             background: rgba(10, 36, 99, 0.3);
             border-radius: 8px;
             padding: 18px;
             border-left: 3px solid var(--secondary);
+            transition: all 0.3s ease;
+        }
+        .aux-item:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
         }
         .aux-value {
             font-size: 22px;
@@ -237,6 +329,8 @@
             color: rgba(240, 247, 255, 0.6);
             line-height: 1.4;
         }
+
+        /* 功能模块样式 */
         .dashboard {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -267,6 +361,7 @@
         .module-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+            border-color: rgba(62, 146, 204, 0.5);
         }
         .module-card:hover::before {
             transform: scaleX(1);
@@ -281,6 +376,11 @@
             justify-content: center;
             margin-bottom: 20px;
             font-size: 24px;
+            transition: all 0.3s ease;
+        }
+        .module-card:hover .module-icon {
+            background-color: rgba(62, 146, 204, 0.3);
+            transform: scale(1.1) rotate(5deg);
         }
         .module-title {
             font-size: 18px;
@@ -296,15 +396,190 @@
             position: absolute;
             top: 15px;
             right: 15px;
-            background-color: #FF5E5B;
+            background-color: var(--danger);
             color: white;
             font-size: 12px;
             padding: 3px 8px;
             border-radius: 12px;
+            animation: pulseBadge 2s infinite;
+        }
+
+        /* 通知和弹窗样式 */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 8px;
+            background-color: rgba(10, 36, 99, 0.9);
+            border-left: 4px solid var(--secondary);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            transform: translateX(120%);
+            transition: transform 0.3s ease-out;
+            z-index: 1000;
+            max-width: 350px;
+        }
+        .notification.show {
+            transform: translateX(0);
+            animation: slideIn 0.3s forwards, slideOut 0.3s forwards 3.5s;
+        }
+        @keyframes slideIn {
+            from { transform: translateX(120%); }
+            to { transform: translateX(0); }
+        }
+        @keyframes slideOut {
+            from { transform: translateX(0); }
+            to { transform: translateX(120%); }
+        }
+        .notification-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .notification-content {
+            font-size: 14px;
+            color: rgba(240, 247, 255, 0.8);
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        .modal.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal-content {
+            background-color: var(--primary);
+            border-radius: 12px;
+            padding: 30px;
+            width: 90%;
+            max-width: 400px;
+            border: 1px solid rgba(62, 146, 204, 0.3);
+            transform: translateY(-20px);
+            transition: transform 0.3s ease;
+        }
+        .modal.show .modal-content {
+            transform: translateY(0);
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(158, 216, 219, 0.2);
+        }
+        .modal-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--warning);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--light);
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .modal-close:hover {
+            color: var(--danger);
+            transform: rotate(90deg);
+        }
+        .modal-body {
+            margin-bottom: 25px;
+        }
+        .modal-message {
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+        }
+        .modal-btn {
+            padding: 8px 20px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        .modal-btn.cancel {
+            background-color: rgba(10, 36, 99, 0.5);
+            color: var(--light);
+            border: 1px solid rgba(62, 146, 204, 0.3);
+        }
+        .modal-btn.cancel:hover {
+            background-color: rgba(10, 36, 99, 0.7);
+        }
+        .modal-btn.confirm {
+            background-color: var(--danger);
+            color: white;
+        }
+        .modal-btn.confirm:hover {
+            background-color: #e0524f;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        /* 页脚样式 */
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(158, 216, 219, 0.1);
+            color: rgba(240, 247, 255, 0.5);
+            font-size: 12px;
         }
     </style>
 </head>
-<body>
+<body class="mode-balance">
+    <!-- 通知提示组件 -->
+    <div class="notification" id="notification">
+        <div class="notification-title" id="notificationTitle"></div>
+        <div class="notification-content" id="notificationContent"></div>
+    </div>
+
+    <!-- 报警确认弹窗 -->
+    <div class="modal" id="alarmModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">
+                    🚨 确认报警
+                </div>
+                <button class="modal-close" onclick="hideAlarmModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <p class="modal-message">您确定要触发一键报警吗？此操作将：</p>
+                <ul style="padding-left: 20px; color: rgba(240, 247, 255, 0.7);">
+                    <li>通知所有值班人员紧急集合</li>
+                    <li>启动现场应急照明系统</li>
+                    <li>联系附近安保和消防部门</li>
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn cancel" onclick="hideAlarmModal()">取消</button>
+                <button class="modal-btn confirm" onclick="triggerAlarm()">确认报警</button>
+            </div>
+        </div>
+    </div>
+
     <div class="clock-bar">
         <div class="clock-display">
             <div class="time" id="current-time">00:00:00</div>
@@ -316,7 +591,7 @@
                 <button class="mode-btn mode-balance active">均衡模式</button>
                 <button class="mode-btn mode-sharp">敏锐模式</button>
             </div>
-            <button class="alarm-btn" onclick="alert('一键报警已触发！系统将通知相关人员并启动应急预案')">
+            <button class="alarm-btn" onclick="showAlarmModal()">
                 🚨 一键报警
             </button>
         </div>
@@ -325,10 +600,9 @@
     <div class="header">
         <div class="logo">
             <img src="https://p26-flow-imagex-download-sign.byteimg.com/tos-cn-i-a9rns2rl98/2cd6cfe303b34642ba8eb7ab449e0d42.jpg~tplv-a9rns2rl98-24:720:720.png?rcl=20251102202201DB73B1F765AC7C3FA05E&rk3s=8e244e95&rrcfp=8a172a1a&x-expires=1762690921&x-signature=mLywsECHL%2BDPHNZtqfWDadnwZYY%3D" 
-     alt="SEE Logo" 
-     class="logo-icon" 
-     style="width: 90px; height: 36px; border-radius: 8px; object-fit: contain;">
-            光守卫-SEE 操作终端
+                 alt="SEE Logo" 
+                 class="logo-icon">
+            光守卫操作终端
         </div>
         <div class="user-info">
             <div class="mail-icon" title="消息通知">
@@ -395,37 +669,38 @@
     </div>
 
     <div class="dashboard">
-        <div class="module-card" onclick="window.location.href='revenue.html'">
+        <div class="module-card" onclick="navigateTo('revenue.html')">
             <div class="module-icon">💹</div>
             <div class="module-title">收益预估查看</div>
             <div class="module-desc">查看实时发电收益、历史收益趋势及未来收益预测，支持按日/周/月筛选</div>
         </div>
 
-        <div class="module-card" onclick="window.location.href='alerts.html'">
+        <div class="module-card" onclick="navigateTo('alerts.html')">
             <div class="alert-badge">3</div>
             <div class="module-icon">⚠️</div>
             <div class="module-title">警报查看与处置</div>
             <div class="module-desc">查看系统警报列表，处理消防、安保及设备异常警报，记录处置结果</div>
         </div>
 
-        <div class="module-card" onclick="window.location.href='cameras.html'">
+        <div class="module-card" onclick="navigateTo('cameras.html')">
             <div class="module-icon">📹</div>
             <div class="module-title">摄像头监控</div>
             <div class="module-desc">实时查看各摄像头画面，支持云台控制、焦距调节及历史录像回放</div>
         </div>
 
-        <div class="module-card" onclick="window.location.href='settings.html'">
+        <div class="module-card" onclick="navigateTo('settings.html')">
             <div class="module-icon">⚙️</div>
             <div class="module-title">系统设置</div>
             <div class="module-desc">配置系统参数、用户权限管理、数据对接设置及设备维护计划</div>
         </div>
     </div>
 
-    <div style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid rgba(158, 216, 219, 0.1); color: rgba(240, 247, 255, 0.5); font-size: 12px;">
-        光守卫-SEE 操作终端 v1.1.0 | 系统版本 Build 20251102
+    <div class="footer">
+        光守卫操作终端 v1.1.0 | 系统版本 Build 20251102
     </div>
 
     <script>
+        // 更新时钟
         function updateClock() {
             const now = new Date();
             const hours = String(now.getHours()).padStart(2, '0');
@@ -444,6 +719,7 @@
             updateRelatedDates(now);
         }
 
+        // 更新相关日期
         function updateRelatedDates(currentDate) {
             const lastMaintenance = new Date(currentDate);
             lastMaintenance.setDate(currentDate.getDate() - 3);
@@ -461,6 +737,7 @@
             document.getElementById('days-until-next-cleaning').textContent = `距当前剩余${daysUntilNextCleaning}天`;
         }
 
+        // 格式化日期
         function formatDate(date) {
             const year = date.getFullYear();
             const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -468,21 +745,115 @@
             return `${year}-${month}-${day}`;
         }
 
-        updateClock();
-        setInterval(updateClock, 1000);
+        // 显示通知
+        function showNotification(title, message) {
+            const notification = document.getElementById('notification');
+            const notificationTitle = document.getElementById('notificationTitle');
+            const notificationContent = document.getElementById('notificationContent');
+            
+            notificationTitle.textContent = title;
+            notificationContent.textContent = message;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 4000);
+        }
 
+        // 模式切换功能
         const modeBtns = document.querySelectorAll('.mode-btn');
         modeBtns.forEach(btn => {
             btn.addEventListener('click', () => {
+                // 移除所有按钮的active类
                 modeBtns.forEach(b => b.classList.remove('active'));
+                // 给当前点击的按钮添加active类
                 btn.classList.add('active');
+                
+                // 更新body类以切换背景
+                document.body.className = '';
+                document.body.classList.add(btn.classList[1]);
+                
+                // 显示模式切换通知
+                const modeName = btn.textContent;
+                let modeDesc = '';
+                
+                switch(btn.classList[1]) {
+                    case 'mode-energy':
+                        modeDesc = '系统将优先优化能源消耗，降低运行功率';
+                        break;
+                    case 'mode-balance':
+                        modeDesc = '系统将在性能与能耗间保持平衡，适合日常运行';
+                        break;
+                    case 'mode-sharp':
+                        modeDesc = '系统将提高监测频率和响应速度，适合重点时段';
+                        break;
+                }
+                
+                showNotification(`已切换至${modeName}`, modeDesc);
             });
         });
 
+        // 报警弹窗控制
+        function showAlarmModal() {
+            document.getElementById('alarmModal').classList.add('show');
+            // 添加震动效果
+            document.querySelector('.alarm-btn').classList.add('alarm-active');
+        }
+
+        function hideAlarmModal() {
+            document.getElementById('alarmModal').classList.remove('show');
+            document.querySelector('.alarm-btn').classList.remove('alarm-active');
+        }
+
+        // 触发报警
+        function triggerAlarm() {
+            hideAlarmModal();
+            showNotification('报警已触发', '系统已通知相关人员并启动应急预案');
+            
+            // 模拟报警闪烁效果
+            let flashCount = 0;
+            const flashInterval = setInterval(() => {
+                document.body.style.backgroundColor = flashCount % 2 === 0 ? 'rgba(255, 94, 91, 0.1)' : '';
+                flashCount++;
+                if (flashCount >= 6) {
+                    clearInterval(flashInterval);
+                    document.body.style.backgroundColor = '';
+                    // 恢复当前模式的背景色
+                    const activeMode = document.querySelector('.mode-btn.active').classList[1];
+                    document.body.className = activeMode;
+                }
+            }, 300);
+        }
+
+        // 导航功能
+        function navigateTo(page) {
+            showNotification('正在跳转', `即将前往${getPageName(page)}页面`);
+            // 模拟页面跳转延迟
+            setTimeout(() => {
+                window.location.href = page;
+            }, 800);
+        }
+
+        // 获取页面名称
+        function getPageName(page) {
+            const pageNames = {
+                'revenue.html': '收益预估查看',
+                'alerts.html': '警报查看与处置',
+                'cameras.html': '摄像头监控',
+                'settings.html': '系统设置'
+            };
+            return pageNames[page] || '目标';
+        }
+
+        // 消息图标点击事件
         document.querySelector('.mail-icon').addEventListener('click', () => {
             const nextCleanDate = document.getElementById('next-cleaning-date').textContent;
-            alert(`您有2条未读消息：\n1. 清洁提醒：建议于${nextCleanDate}前完成光伏板清扫\n2. 系统更新通知：新版本V2.1.0已发布，支持更多数据可视化功能`);
+            showNotification('新消息通知', `清洁提醒：建议于${nextCleanDate}前完成光伏板清扫`);
         });
+
+        // 初始化
+        updateClock();
+        setInterval(updateClock, 1000);
     </script>
 </body>
 </html>

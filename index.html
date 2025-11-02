@@ -399,28 +399,28 @@
         </div>
     </div>
 
-    <!-- 功能模块区域 -->
+    <!-- 功能模块区域（修复跳转链接） -->
     <div class="dashboard">
-        <div class="module-card" onclick="window.location.href='/revenue.html'">
+        <div class="module-card" onclick="navigateTo('revenue.html')">
             <div class="module-icon">💹</div>
             <div class="module-title">收益预估查看</div>
             <div class="module-desc">查看实时发电收益、历史收益趋势及未来收益预测，支持按日/周/月筛选</div>
         </div>
 
-        <div class="module-card" onclick="window.location.href='/alerts.html'">
+        <div class="module-card" onclick="navigateTo('alerts.html')">
             <div class="alert-badge">3</div>
             <div class="module-icon">⚠️</div>
             <div class="module-title">警报查看与处置</div>
             <div class="module-desc">查看系统警报列表，处理消防、安保及设备异常警报，记录处置结果</div>
         </div>
 
-        <div class="module-card" onclick="window.location.href='/cameras.html'">
+        <div class="module-card" onclick="navigateTo('cameras.html')">
             <div class="module-icon">📹</div>
             <div class="module-title">摄像头监控</div>
             <div class="module-desc">实时查看各摄像头画面，支持云台控制、焦距调节及历史录像回放</div>
         </div>
 
-        <div class="module-card" onclick="window.location.href='/settings.html'">
+        <div class="module-card" onclick="navigateTo('settings.html')">
             <div class="module-icon">⚙️</div>
             <div class="module-title">系统设置</div>
             <div class="module-desc">配置系统参数、用户权限管理、数据对接设置及设备维护计划</div>
@@ -433,6 +433,24 @@
     </div>
 
     <script>
+        // 通用导航函数（修复跳转问题）
+        function navigateTo(page) {
+            // 尝试相对路径跳转
+            try {
+                // 先检查是否为根目录环境
+                if (window.location.pathname.endsWith('/') || window.location.pathname.endsWith('index.html')) {
+                    window.location.href = page;
+                } else {
+                    // 如果在子目录中，使用相对路径返回上级再跳转
+                    window.location.href = '../' + page;
+                }
+            } catch (e) {
+                // 异常情况下使用绝对路径作为备选
+                window.location.href = '/' + page;
+                console.log('导航异常，使用备选路径:', '/' + page);
+            }
+        }
+
         // 实时时钟功能
         function updateClock() {
             const now = new Date();
@@ -451,33 +469,29 @@
             const currentDateText = `${year}年${month}月${day}日 ${weekday}`;
             document.getElementById('current-date').textContent = currentDateText;
 
-            // 计算并更新相关日期（确保时间逻辑正确）
+            // 计算并更新相关日期
             updateRelatedDates(now);
         }
 
         // 更新相关日期，确保时间逻辑正确
         function updateRelatedDates(currentDate) {
-            // 1. 上次设备维护时间：当前日期前3天
+            // 上次设备维护时间：当前日期前3天
             const lastMaintenance = new Date(currentDate);
             lastMaintenance.setDate(currentDate.getDate() - 3);
-            document.getElementById('last-maintenance-date').textContent = 
-                formatDate(lastMaintenance);
+            document.getElementById('last-maintenance-date').textContent = formatDate(lastMaintenance);
 
-            // 2. 上次光伏板清扫时间：当前日期前6天
+            // 上次光伏板清扫时间：当前日期前6天
             const lastCleaning = new Date(currentDate);
             lastCleaning.setDate(currentDate.getDate() - 6);
-            document.getElementById('last-cleaning-date').textContent = 
-                formatDate(lastCleaning);
+            document.getElementById('last-cleaning-date').textContent = formatDate(lastCleaning);
 
-            // 3. 建议下次清洁时间：当前日期后3天（不超过3天）
+            // 建议下次清洁时间：当前日期后3天
             const nextCleaning = new Date(currentDate);
             nextCleaning.setDate(currentDate.getDate() + 3);
-            const daysUntilNextCleaning = 3; // 固定3天内
+            const daysUntilNextCleaning = 3;
             
-            document.getElementById('next-cleaning-date').textContent = 
-                formatDate(nextCleaning);
-            document.getElementById('days-until-next-cleaning').textContent = 
-                `距当前剩余${daysUntilNextCleaning}天`;
+            document.getElementById('next-cleaning-date').textContent = formatDate(nextCleaning);
+            document.getElementById('days-until-next-cleaning').textContent = `距当前剩余${daysUntilNextCleaning}天`;
         }
 
         // 日期格式化工具：YYYY-MM-DD

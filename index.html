@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>光守卫-SEE 操作终端</title>
     <style>
         :root {
@@ -354,8 +357,8 @@
         </div>
         <div class="core-card highlight">
             <div class="core-label">建议下次清洁时间</div>
-            <div class="core-value warning">2026-01-08</div>
-            <div class="core-label" style="margin-top: 8px; font-size: 12px;">距当前剩余2天</div>
+            <div class="core-value warning" id="next-cleaning-date">2026-01-04</div>
+            <div class="core-label" style="margin-top: 8px; font-size: 12px;" id="days-until-next-cleaning">距当前剩余3天</div>
         </div>
         <div class="core-card">
             <div class="core-label">待处理警报</div>
@@ -383,11 +386,11 @@
             <div class="aux-label">30天内节水总量</div>
         </div>
         <div class="aux-item">
-            <div class="aux-value">2026-01-10</div>
+            <div class="aux-value" id="last-maintenance-date">2025-12-28</div>
             <div class="aux-label">上次设备维护时间</div>
         </div>
         <div class="aux-item">
-            <div class="aux-value">2026-01-05</div>
+            <div class="aux-value" id="last-cleaning-date">2025-12-25</div>
             <div class="aux-label">上次光伏板清扫时间</div>
         </div>
         <div class="aux-item">
@@ -398,30 +401,35 @@
 
     <!-- 功能模块区域 -->
     <div class="dashboard">
-        <div class="module-card" onclick="window.location.href='revenue.html'">
+        <div class="module-card" onclick="window.location.href='/revenue.html'">
             <div class="module-icon">💹</div>
             <div class="module-title">收益预估查看</div>
             <div class="module-desc">查看实时发电收益、历史收益趋势及未来收益预测，支持按日/周/月筛选</div>
         </div>
 
-        <div class="module-card" onclick="window.location.href='alerts.html'">
+        <div class="module-card" onclick="window.location.href='/alerts.html'">
             <div class="alert-badge">3</div>
             <div class="module-icon">⚠️</div>
             <div class="module-title">警报查看与处置</div>
             <div class="module-desc">查看系统警报列表，处理消防、安保及设备异常警报，记录处置结果</div>
         </div>
 
-        <div class="module-card" onclick="window.location.href='cameras.html'">
+        <div class="module-card" onclick="window.location.href='/cameras.html'">
             <div class="module-icon">📹</div>
             <div class="module-title">摄像头监控</div>
             <div class="module-desc">实时查看各摄像头画面，支持云台控制、焦距调节及历史录像回放</div>
         </div>
 
-        <div class="module-card" onclick="window.location.href='settings.html'">
+        <div class="module-card" onclick="window.location.href='/settings.html'">
             <div class="module-icon">⚙️</div>
             <div class="module-title">系统设置</div>
             <div class="module-desc">配置系统参数、用户权限管理、数据对接设置及设备维护计划</div>
         </div>
+    </div>
+
+    <!-- 版本信息 -->
+    <div style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid rgba(158, 216, 219, 0.1); color: rgba(240, 247, 255, 0.5); font-size: 12px;">
+        光守卫-SEE 操作终端 v2.1.0 | 系统版本 Build 20260101
     </div>
 
     <script>
@@ -440,8 +448,46 @@
             const day = now.getDate();
             const weekdays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
             const weekday = weekdays[now.getDay()];
-            document.getElementById('current-date').textContent = `${year}年${month}月${day}日 ${weekday}`;
+            const currentDateText = `${year}年${month}月${day}日 ${weekday}`;
+            document.getElementById('current-date').textContent = currentDateText;
+
+            // 计算并更新相关日期（确保时间逻辑正确）
+            updateRelatedDates(now);
         }
+
+        // 更新相关日期，确保时间逻辑正确
+        function updateRelatedDates(currentDate) {
+            // 1. 上次设备维护时间：当前日期前3天
+            const lastMaintenance = new Date(currentDate);
+            lastMaintenance.setDate(currentDate.getDate() - 3);
+            document.getElementById('last-maintenance-date').textContent = 
+                formatDate(lastMaintenance);
+
+            // 2. 上次光伏板清扫时间：当前日期前6天
+            const lastCleaning = new Date(currentDate);
+            lastCleaning.setDate(currentDate.getDate() - 6);
+            document.getElementById('last-cleaning-date').textContent = 
+                formatDate(lastCleaning);
+
+            // 3. 建议下次清洁时间：当前日期后3天（不超过3天）
+            const nextCleaning = new Date(currentDate);
+            nextCleaning.setDate(currentDate.getDate() + 3);
+            const daysUntilNextCleaning = 3; // 固定3天内
+            
+            document.getElementById('next-cleaning-date').textContent = 
+                formatDate(nextCleaning);
+            document.getElementById('days-until-next-cleaning').textContent = 
+                `距当前剩余${daysUntilNextCleaning}天`;
+        }
+
+        // 日期格式化工具：YYYY-MM-DD
+        function formatDate(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
         // 初始化时钟并每秒更新
         updateClock();
         setInterval(updateClock, 1000);
@@ -457,7 +503,8 @@
 
         // 信封点击事件
         document.querySelector('.mail-icon').addEventListener('click', () => {
-            alert('您有2条未读消息：\n1. 清洁提醒：建议于2026-01-08前完成光伏板清扫\n2. 系统更新通知：新版本V2.1.0已发布，支持更多数据可视化功能');
+            const nextCleanDate = document.getElementById('next-cleaning-date').textContent;
+            alert(`您有2条未读消息：\n1. 清洁提醒：建议于${nextCleanDate}前完成光伏板清扫\n2. 系统更新通知：新版本V2.1.0已发布，支持更多数据可视化功能`);
         });
     </script>
 </body>

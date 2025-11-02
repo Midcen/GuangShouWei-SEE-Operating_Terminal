@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>光守卫-SEE 操作终端</title>
     <style>
         :root {
@@ -14,7 +17,6 @@
             --text: #F0F7FF;
             --danger: #FF5E5B;
             --warning: #FFB830;
-            --success: #36D399;
         }
         * {
             margin: 0;
@@ -31,53 +33,6 @@
             min-height: 100vh;
             padding: 20px;
         }
-
-        /* 加载动画容器 */
-        .loader-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: var(--dark);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            transition: opacity 1s ease-in-out;
-        }
-        .loader-hidden {
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        /* LOGO样式 */
-        .loader-logo {
-            width: 700px;
-            height: auto;
-            animation: fadeIn 0.8s ease-out forwards, pulse 1s ease-in-out 0.8s;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.8); }
-            to { opacity: 1; transform: scale(1); }
-        }
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-
-        /* 主内容区域 */
-        .main-content {
-            display: none;
-            animation: fadeInContent 0.5s ease-out forwards;
-        }
-        @keyframes fadeInContent {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* 时钟栏样式 */
         .clock-bar {
             display: flex;
             justify-content: space-between;
@@ -87,11 +42,6 @@
             background: rgba(10, 36, 99, 0.3);
             border-radius: 8px;
             border: 1px solid rgba(62, 146, 204, 0.2);
-            backdrop-filter: blur(5px);
-            transition: all 0.3s ease;
-        }
-        .clock-bar:hover {
-            border-color: rgba(62, 146, 204, 0.4);
         }
         .clock-display {
             font-size: 16px;
@@ -118,13 +68,12 @@
         }
         .mode-energy {
             background-color: rgba(54, 211, 153, 0.2);
-            color: var(--success);
+            color: #36D399;
             border-color: rgba(54, 211, 153, 0.3);
         }
         .mode-energy.active {
-            background-color: var(--success);
+            background-color: #36D399;
             color: white;
-            box-shadow: 0 0 10px rgba(54, 211, 153, 0.3);
         }
         .mode-balance {
             background-color: rgba(62, 146, 204, 0.2);
@@ -134,7 +83,6 @@
         .mode-balance.active {
             background-color: var(--secondary);
             color: white;
-            box-shadow: 0 0 10px rgba(62, 146, 204, 0.3);
         }
         .mode-sharp {
             background-color: rgba(158, 216, 219, 0.2);
@@ -144,7 +92,6 @@
         .mode-sharp.active {
             background-color: #9ED8DB;
             color: var(--dark);
-            box-shadow: 0 0 10px rgba(158, 216, 219, 0.3);
         }
         .alarm-btn {
             background-color: rgba(255, 94, 91, 0.2);
@@ -161,11 +108,7 @@
         }
         .alarm-btn:hover {
             background-color: rgba(255, 94, 91, 0.3);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
-
-        /* 页头样式 */
         .header {
             display: flex;
             justify-content: space-between;
@@ -182,9 +125,14 @@
             align-items: center;
             gap: 10px;
         }
-        .logo img {
+        .logo-icon {
+            width: 36px;
             height: 36px;
-            width: auto;
+            background-color: var(--accent);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         .user-info {
             display: flex;
@@ -206,7 +154,6 @@
         }
         .mail-icon:hover {
             background-color: rgba(62, 146, 204, 0.3);
-            transform: translateY(-2px);
         }
         .mail-badge {
             position: absolute;
@@ -222,12 +169,6 @@
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            animation: pulseBadge 2s infinite;
-        }
-        @keyframes pulseBadge {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
         }
         .user-avatar {
             width: 40px;
@@ -238,15 +179,7 @@
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s;
         }
-        .user-avatar:hover {
-            transform: scale(1.1);
-            box-shadow: 0 0 10px rgba(62, 146, 204, 0.5);
-        }
-
-        /* 核心数据样式 */
         .core-stats {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -261,11 +194,6 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
-            transition: all 0.3s ease;
-        }
-        .core-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
         }
         .core-card.highlight {
             border-color: var(--warning);
@@ -280,19 +208,10 @@
             font-size: 32px;
             font-weight: bold;
             color: var(--light);
-            transition: all 0.3s;
-        }
-        .core-value:hover {
-            transform: translateX(5px);
         }
         .core-value.warning {
             color: var(--warning);
         }
-        .core-value.success {
-            color: var(--success);
-        }
-
-        /* 辅助数据样式 */
         .auxiliary-stats {
             display: flex;
             gap: 20px;
@@ -300,37 +219,12 @@
             overflow-x: auto;
             padding-bottom: 10px;
         }
-        .auxiliary-stats::-webkit-scrollbar {
-            height: 6px;
-        }
-        .auxiliary-stats::-webkit-scrollbar-track {
-            background: rgba(10, 36, 99, 0.2);
-            border-radius: 10px;
-        }
-        .auxiliary-stats::-webkit-scrollbar-thumb {
-            background: rgba(62, 146, 204, 0.5);
-            border-radius: 10px;
-        }
         .aux-item {
             flex: 0 0 200px;
             background: rgba(10, 36, 99, 0.3);
             border-radius: 8px;
             padding: 18px;
             border-left: 3px solid var(--secondary);
-            transition: all 0.3s ease;
-        }
-        .aux-item:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
-        }
-        .aux-item.warning {
-            border-left-color: var(--warning);
-        }
-        .aux-item.danger {
-            border-left-color: var(--danger);
-        }
-        .aux-item.success {
-            border-left-color: var(--success);
         }
         .aux-value {
             font-size: 22px;
@@ -343,86 +237,6 @@
             color: rgba(240, 247, 255, 0.6);
             line-height: 1.4;
         }
-
-        /* 图表样式 */
-        .status-chart {
-            margin-top: 30px;
-            padding: 20px;
-            background: rgba(10, 36, 99, 0.3);
-            border-radius: 12px;
-            border: 1px solid rgba(62, 146, 204, 0.3);
-        }
-        .chart-title {
-            font-size: 18px;
-            margin-bottom: 15px;
-            color: var(--light);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .chart-period {
-            font-size: 14px;
-            color: rgba(240, 247, 255, 0.7);
-            display: flex;
-            gap: 10px;
-        }
-        .period-btn {
-            padding: 4px 10px;
-            border-radius: 4px;
-            border: none;
-            background: transparent;
-            color: inherit;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .period-btn.active {
-            background: rgba(62, 146, 204, 0.3);
-            color: var(--light);
-        }
-        .chart-container {
-            height: 200px;
-            position: relative;
-            overflow: hidden;
-        }
-        .chart-line {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-        }
-        .chart-line path {
-            fill: none;
-            stroke: var(--accent);
-            stroke-width: 2;
-        }
-        .chart-area {
-            fill: linear-gradient(to top, rgba(40, 181, 181, 0.2), transparent);
-        }
-        .chart-axis {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 1px;
-            background-color: rgba(158, 216, 219, 0.2);
-        }
-        .chart-tick {
-            position: absolute;
-            bottom: -5px;
-            width: 1px;
-            height: 5px;
-            background-color: rgba(158, 216, 219, 0.2);
-        }
-        .chart-label {
-            position: absolute;
-            bottom: -20px;
-            font-size: 12px;
-            color: rgba(240, 247, 255, 0.6);
-            transform: translateX(-50%);
-        }
-
-        /* 功能模块样式 */
         .dashboard {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -467,11 +281,6 @@
             justify-content: center;
             margin-bottom: 20px;
             font-size: 24px;
-            transition: all 0.3s ease;
-        }
-        .module-card:hover .module-icon {
-            background-color: rgba(62, 146, 204, 0.3);
-            transform: scale(1.1);
         }
         .module-title {
             font-size: 18px;
@@ -487,253 +296,136 @@
             position: absolute;
             top: 15px;
             right: 15px;
-            background-color: var(--danger);
+            background-color: #FF5E5B;
             color: white;
             font-size: 12px;
             padding: 3px 8px;
             border-radius: 12px;
-            animation: pulseBadge 2s infinite;
-        }
-
-        /* 页脚样式 */
-        .footer {
-            text-align: center;
-            margin-top: 40px;
-            padding-top: 20px;
-            border-top: 1px solid rgba(158, 216, 219, 0.1);
-            color: rgba(240, 247, 255, 0.5);
-            font-size: 12px;
         }
     </style>
 </head>
 <body>
-    <!-- 加载动画容器 -->
-    <div class="loader-container" id="loader">
-        <!-- 替换为新的启动页SEE标志 -->
-        <img src="https://p26-flow-imagex-download-sign.byteimg.com/tos-cn-i-a9rns2rl98/2cd6cfe303b34642ba8eb7ab449e0d42.jpg~tplv-a9rns2rl98-24:720:720.png?rcl=20251102202201DB73B1F765AC7C3FA05E&rk3s=8e244e95&rrcfp=8a172a1a&x-expires=1762690921&x-signature=mLywsECHL%2BDPHNZtqfWDadnwZYY%3D" 
+    <div class="clock-bar">
+        <div class="clock-display">
+            <div class="time" id="current-time">00:00:00</div>
+            <div class="date" id="current-date">2026年1月1日 星期一</div>
+        </div>
+        <div style="display: flex; gap: 15px; align-items: center;">
+            <div class="mode-controls">
+                <button class="mode-btn mode-energy">节能模式</button>
+                <button class="mode-btn mode-balance active">均衡模式</button>
+                <button class="mode-btn mode-sharp">敏锐模式</button>
+            </div>
+            <button class="alarm-btn" onclick="alert('一键报警已触发！系统将通知相关人员并启动应急预案')">
+                🚨 一键报警
+            </button>
+        </div>
+    </div>
+
+    <div class="header">
+        <div class="logo">
+            <img src="https://p26-flow-imagex-download-sign.byteimg.com/tos-cn-i-a9rns2rl98/2cd6cfe303b34642ba8eb7ab449e0d42.jpg~tplv-a9rns2rl98-24:720:720.png?rcl=20251102202201DB73B1F765AC7C3FA05E&rk3s=8e244e95&rrcfp=8a172a1a&x-expires=1762690921&x-signature=mLywsECHL%2BDPHNZtqfWDadnwZYY%3D" 
      alt="SEE Logo" 
-     class="loader-logo">
-    </div>
-
-    <!-- 主页内容 -->
-    <div class="main-content" id="mainContent">
-        <div class="clock-bar">
-            <div class="clock-display">
-                <div class="time" id="current-time">00:00:00</div>
-                <div class="date" id="current-date">2026年1月1日 星期一</div>
-            </div>
-            <div style="display: flex; gap: 15px; align-items: center;">
-                <div class="mode-controls">
-                    <button class="mode-btn mode-energy">节能模式</button>
-                    <button class="mode-btn mode-balance active">均衡模式</button>
-                    <button class="mode-btn mode-sharp">敏锐模式</button>
-                </div>
-                <button class="alarm-btn" onclick="showAlarmConfirm()">
-                    🚨 一键报警
-                </button>
-            </div>
+     class="logo-icon" 
+     style="width: 90px; height: 36px; border-radius: 8px; object-fit: contain;">
+            光守卫-SEE 操作终端
         </div>
-
-        <div class="header">
-            <div class="logo">
-                <!-- 顶部导航栏SEE标志 -->
-                <img src="https://p3-flow-imagex-download-sign.byteimg.com/tos-cn-i-a9rns2rl98/af3fcb5b448944d0b80e267f07ac7f9a.jpg~tplv-a9rns2rl98-24:720:720.png?rcl=202511022012009F085286E6A14237EBFF&rk3s=8e244e95&rrcfp=8a172a1a&x-expires=1762690321&x-signature=4eUiQXcjyC0EWo6xTnK%2FgkN0rMU%3D" 
-                     alt="SEE Logo">
-                光守卫-SEE 操作终端
+        <div class="user-info">
+            <div class="mail-icon" title="消息通知">
+                ✉️
+                <span class="mail-badge">2</span>
             </div>
-            <div class="user-info">
-                <div class="mail-icon" title="消息通知">
-                    ✉️
-                    <span class="mail-badge">2</span>
-                </div>
-                <span>房山电站管理员</span>
-                <div class="user-avatar" title="个人信息">管</div>
-            </div>
-        </div>
-
-        <div class="core-stats">
-            <div class="core-card">
-                <div class="core-label">今日发电量</div>
-                <div class="core-value">1024°</div>
-                <div class="core-label" style="margin-top: 8px; font-size: 12px;">单位：MW</div>
-            </div>
-            <div class="core-card">
-                <div class="core-label">清洁后增收预估</div>
-                <div class="core-value success">¥2,560</div>
-                <div class="core-label" style="margin-top: 8px; font-size: 12px;">今日预估</div>
-            </div>
-            <div class="core-card highlight">
-                <div class="core-label">建议下次清洁时间</div>
-                <div class="core-value warning" id="next-cleaning-date">2026-01-04</div>
-                <div class="core-label" style="margin-top: 8px; font-size: 12px;" id="days-until-next-cleaning">距当前剩余3天</div>
-            </div>
-            <div class="core-card">
-                <div class="core-label">待处理警报</div>
-                <div class="core-value danger">3</div>
-                <div class="core-label" style="margin-top: 8px; font-size: 12px;">含消防1项、安保2项</div>
-            </div>
-        </div>
-
-        <!-- 发电趋势图表 -->
-        <div class="status-chart">
-            <div class="chart-title">
-                今日发电趋势
-                <div class="chart-period">
-                    <button class="period-btn">日</button>
-                    <button class="period-btn active">周</button>
-                    <button class="period-btn">月</button>
-                </div>
-            </div>
-            <div class="chart-container">
-                <svg class="chart-line" viewBox="0 0 100 50" preserveAspectRatio="none">
-                    <path d="M0,40 L10,38 L20,30 L30,25 L40,15 L50,10 L60,12 L70,18 L80,25 L90,32 L100,35" />
-                    <path class="chart-area" d="M0,40 L10,38 L20,30 L30,25 L40,15 L50,10 L60,12 L70,18 L80,25 L90,32 L100,35 L100,50 L0,50 Z" />
-                </svg>
-                <div class="chart-axis"></div>
-                <div class="chart-tick" style="left: 0%"></div>
-                <div class="chart-label" style="left: 0%">00:00</div>
-                <div class="chart-tick" style="left: 25%"></div>
-                <div class="chart-label" style="left: 25%">06:00</div>
-                <div class="chart-tick" style="left: 50%"></div>
-                <div class="chart-label" style="left: 50%">12:00</div>
-                <div class="chart-tick" style="left: 75%"></div>
-                <div class="chart-label" style="left: 75%">18:00</div>
-                <div class="chart-tick" style="left: 100%"></div>
-                <div class="chart-label" style="left: 100%">24:00</div>
-            </div>
-        </div>
-
-        <div class="auxiliary-stats">
-            <div class="aux-item warning">
-                <div class="aux-value">18%</div>
-                <div class="aux-label">光伏板灰尘覆盖指数</div>
-            </div>
-            <div class="aux-item">
-                <div class="aux-value">72 μg/m³</div>
-                <div class="aux-label">今日PM2.5指数</div>
-            </div>
-            <div class="aux-item">
-                <div class="aux-value">06:42 / 17:15</div>
-                <div class="aux-label">今日日出/日落时间</div>
-            </div>
-            <div class="aux-item success">
-                <div class="aux-value">5.6 吨</div>
-                <div class="aux-label">30天内节水总量</div>
-            </div>
-            <div class="aux-item">
-                <div class="aux-value" id="last-maintenance-date">2025-12-28</div>
-                <div class="aux-label">上次设备维护时间</div>
-            </div>
-            <div class="aux-item">
-                <div class="aux-value" id="last-cleaning-date">2025-12-25</div>
-                <div class="aux-label">上次光伏板清扫时间</div>
-            </div>
-            <div class="aux-item">
-                <div class="aux-value">8</div>
-                <div class="aux-label">在线摄像头数量</div>
-            </div>
-            <div class="aux-item danger">
-                <div class="aux-value">1</div>
-                <div class="aux-label">离线摄像头数量</div>
-            </div>
-        </div>
-
-        <div class="dashboard">
-            <div class="module-card" onclick="navigateTo('revenue.html')">
-                <div class="module-icon">💹</div>
-                <div class="module-title">收益预估查看</div>
-                <div class="module-desc">查看实时发电收益、历史收益趋势及未来收益预测，支持按日/周/月筛选</div>
-            </div>
-
-            <div class="module-card" onclick="navigateTo('alerts.html')">
-                <div class="alert-badge">3</div>
-                <div class="module-icon">⚠️</div>
-                <div class="module-title">警报查看与处置</div>
-                <div class="module-desc">查看系统警报列表，处理消防、安保及设备异常警报，记录处置结果</div>
-            </div>
-
-            <div class="module-card" onclick="navigateTo('cameras.html')">
-                <div class="module-icon">📹</div>
-                <div class="module-title">摄像头监控</div>
-                <div class="module-desc">实时查看各摄像头画面，支持云台控制、焦距调节及历史录像回放</div>
-            </div>
-
-            <div class="module-card" onclick="navigateTo('cleaning.html')">
-                <div class="module-icon">🧹</div>
-                <div class="module-title">清洁计划管理</div>
-                <div class="module-desc">查看和管理光伏板清洁计划，设置自动提醒，记录清洁历史和效果</div>
-            </div>
-
-            <div class="module-card" onclick="navigateTo('equipment.html')">
-                <div class="module-icon">🔌</div>
-                <div class="module-title">设备状态监控</div>
-                <div class="module-desc">实时监控光伏设备运行状态，查看性能参数和故障信息，生成维护建议</div>
-            </div>
-
-            <div class="module-card" onclick="navigateTo('settings.html')">
-                <div class="module-icon">⚙️</div>
-                <div class="module-title">系统设置</div>
-                <div class="module-desc">配置系统参数、用户权限管理、数据对接设置及设备维护计划</div>
-            </div>
-        </div>
-
-        <div class="footer">
-            光守卫-SEE 操作终端 v2.1.0 | 系统版本 Build 20260101
+            <span>房山电站管理员</span>
+            <div class="user-avatar">管</div>
         </div>
     </div>
 
-   <script>
-        // 页面加载完成后执行
-        document.addEventListener('DOMContentLoaded', function() {
-            // 加载动画逻辑
-            const loader = document.getElementById('loader');
-            const mainContent = document.getElementById('mainContent');
-            
-            // 2秒后隐藏加载动画并显示主内容
-            setTimeout(function() {
-                loader.classList.add('loader-hidden');
-                // 等待动画完成后显示主内容
-                setTimeout(function() {
-                    mainContent.style.display = 'block';
-                }, 1000);
-            }, 2000);
+    <div class="core-stats">
+        <div class="core-card">
+            <div class="core-label">今日发电量</div>
+            <div class="core-value">1024°</div>
+            <div class="core-label" style="margin-top: 8px; font-size: 12px;">单位：MW</div>
+        </div>
+        <div class="core-card">
+            <div class="core-label">清洁后增收预估</div>
+            <div class="core-value">¥2,560</div>
+            <div class="core-label" style="margin-top: 8px; font-size: 12px;">今日预估</div>
+        </div>
+        <div class="core-card highlight">
+            <div class="core-label">建议下次清洁时间</div>
+            <div class="core-value warning" id="next-cleaning-date">2026-01-04</div>
+            <div class="core-label" style="margin-top: 8px; font-size: 12px;" id="days-until-next-cleaning">距当前剩余3天</div>
+        </div>
+        <div class="core-card">
+            <div class="core-label">待处理警报</div>
+            <div class="core-value">3</div>
+            <div class="core-label" style="margin-top: 8px; font-size: 12px;">含消防1项、安保2项</div>
+        </div>
+    </div>
 
-            // 初始化时钟
-            updateClock();
-            setInterval(updateClock, 1000);
+    <div class="auxiliary-stats">
+        <div class="aux-item">
+            <div class="aux-value">18%</div>
+            <div class="aux-label">光伏板灰尘覆盖指数</div>
+        </div>
+        <div class="aux-item">
+            <div class="aux-value">72 μg/m³</div>
+            <div class="aux-label">今日PM2.5指数</div>
+        </div>
+        <div class="aux-item">
+            <div class="aux-value">06:42 / 17:15</div>
+            <div class="aux-label">今日日出/日落时间</div>
+        </div>
+        <div class="aux-item">
+            <div class="aux-value">5.6 吨</div>
+            <div class="aux-label">30天内节水总量</div>
+        </div>
+        <div class="aux-item">
+            <div class="aux-value" id="last-maintenance-date">2025-12-28</div>
+            <div class="aux-label">上次设备维护时间</div>
+        </div>
+        <div class="aux-item">
+            <div class="aux-value" id="last-cleaning-date">2025-12-25</div>
+            <div class="aux-label">上次光伏板清扫时间</div>
+        </div>
+        <div class="aux-item">
+            <div class="aux-value">8</div>
+            <div class="aux-label">在线摄像头数量</div>
+        </div>
+    </div>
 
-            // 模式切换功能
-            const modeBtns = document.querySelectorAll('.mode-btn');
-            modeBtns.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    modeBtns.forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    showModeChangeAlert(btn.textContent);
-                });
-            });
+    <div class="dashboard">
+        <div class="module-card" onclick="window.location.href='revenue.html'">
+            <div class="module-icon">💹</div>
+            <div class="module-title">收益预估查看</div>
+            <div class="module-desc">查看实时发电收益、历史收益趋势及未来收益预测，支持按日/周/月筛选</div>
+        </div>
 
-            // 图表周期切换
-            const periodBtns = document.querySelectorAll('.period-btn');
-            periodBtns.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    periodBtns.forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                });
-            });
+        <div class="module-card" onclick="window.location.href='alerts.html'">
+            <div class="alert-badge">3</div>
+            <div class="module-icon">⚠️</div>
+            <div class="module-title">警报查看与处置</div>
+            <div class="module-desc">查看系统警报列表，处理消防、安保及设备异常警报，记录处置结果</div>
+        </div>
 
-            // 消息图标点击事件
-            document.querySelector('.mail-icon').addEventListener('click', () => {
-                const nextCleanDate = document.getElementById('next-cleaning-date').textContent;
-                alert(`您有2条未读消息：\n1. 清洁提醒：建议于${nextCleanDate}前完成光伏板清扫\n2. 系统更新通知：新版本V2.1.0已发布，支持更多数据可视化功能`);
-            });
+        <div class="module-card" onclick="window.location.href='cameras.html'">
+            <div class="module-icon">📹</div>
+            <div class="module-title">摄像头监控</div>
+            <div class="module-desc">实时查看各摄像头画面，支持云台控制、焦距调节及历史录像回放</div>
+        </div>
 
-            // 用户头像点击事件
-            document.querySelector('.user-avatar').addEventListener('click', () => {
-                alert('用户信息：\n姓名：房山电站管理员\nID：ADM-2026-001\n权限：管理员\n最后登录：今天 08:30');
-            });
-        });
+        <div class="module-card" onclick="window.location.href='settings.html'">
+            <div class="module-icon">⚙️</div>
+            <div class="module-title">系统设置</div>
+            <div class="module-desc">配置系统参数、用户权限管理、数据对接设置及设备维护计划</div>
+        </div>
+    </div>
 
-        // 实时时钟功能
+    <div style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid rgba(158, 216, 219, 0.1); color: rgba(240, 247, 255, 0.5); font-size: 12px;">
+        光守卫-SEE 操作终端 v1.1.0 | 系统版本 Build 20251102
+    </div>
+
+    <script>
         function updateClock() {
             const now = new Date();
             const hours = String(now.getHours()).padStart(2, '0');
@@ -776,34 +468,21 @@
             return `${year}-${month}-${day}`;
         }
 
-        // 导航功能
-        function navigateTo(page) {
-            alert(`即将跳转到：${page}`);
-        }
+        updateClock();
+        setInterval(updateClock, 1000);
 
-        // 报警确认功能
-        function showAlarmConfirm() {
-            if(confirm('确定要触发一键报警吗？\n此操作将通知相关人员并启动应急预案。')) {
-                alert('一键报警已触发！\n系统已通知相关人员并启动应急预案。');
-            }
-        }
+        const modeBtns = document.querySelectorAll('.mode-btn');
+        modeBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                modeBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            });
+        });
 
-        // 模式切换提示
-        function showModeChangeAlert(mode) {
-            let description = '';
-            switch(mode) {
-                case '节能模式':
-                    description = '系统将优先考虑能源效率，降低能耗，可能会影响部分监控频率';
-                    break;
-                case '均衡模式':
-                    description = '系统在性能和能耗之间取得平衡，适合日常监控使用';
-                    break;
-                case '敏锐模式':
-                    description = '系统将提高监控频率和数据采集精度，能耗会有所增加';
-                    break;
-            }
-            alert(`已切换至${mode}\n${description}`);
-        }
+        document.querySelector('.mail-icon').addEventListener('click', () => {
+            const nextCleanDate = document.getElementById('next-cleaning-date').textContent;
+            alert(`您有2条未读消息：\n1. 清洁提醒：建议于${nextCleanDate}前完成光伏板清扫\n2. 系统更新通知：新版本V2.1.0已发布，支持更多数据可视化功能`);
+        });
     </script>
 </body>
 </html>
